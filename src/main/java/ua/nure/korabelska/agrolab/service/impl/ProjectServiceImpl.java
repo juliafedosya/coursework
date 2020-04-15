@@ -1,6 +1,7 @@
 package ua.nure.korabelska.agrolab.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ua.nure.korabelska.agrolab.dto.SaveProjectDto;
 import ua.nure.korabelska.agrolab.dto.UpdateProjectDto;
 import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
@@ -13,6 +14,7 @@ import ua.nure.korabelska.agrolab.service.ProjectService;
 import java.util.HashSet;
 import java.util.Set;
 
+@Service
 public class ProjectServiceImpl implements ProjectService {
 
     ProjectRepository projectRepository;
