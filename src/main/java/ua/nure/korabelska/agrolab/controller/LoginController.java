@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.nure.korabelska.agrolab.dto.AuthenticationRequestDto;
 import ua.nure.korabelska.agrolab.dto.RegistrationUserDto;
 import ua.nure.korabelska.agrolab.dto.UserDto;
+import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
 import ua.nure.korabelska.agrolab.model.User;
 import ua.nure.korabelska.agrolab.security.jwt.JwtTokenProvider;
 import ua.nure.korabelska.agrolab.service.UserService;
@@ -46,9 +47,11 @@ public class LoginController {
             log.info("hello");
             log.info(requestDto.toString());
             String username = requestDto.getUsername();
-            User user = userService.findByUsername(username);
-            if (user == null) {
-                return  ResponseEntity.badRequest().build();
+            User user = null;
+            try {
+                user = userService.findByUsername(username);
+            } catch (UserNotFoundException e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
             }
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
 

@@ -16,6 +16,6 @@ public class UpdateProjectDto {
     private String name;
 
     @NotNull
-    private Set<Long> membersId;
+    private Set<String> usernames;
 
 }

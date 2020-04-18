@@ -2,10 +2,12 @@ package ua.nure.korabelska.agrolab.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.java2d.loops.ProcessPath;
 import ua.nure.korabelska.agrolab.dto.SaveProjectDto;
 import ua.nure.korabelska.agrolab.dto.UpdateProjectDto;
 import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
 import ua.nure.korabelska.agrolab.model.Project;
+import ua.nure.korabelska.agrolab.model.Status;
 import ua.nure.korabelska.agrolab.model.User;
 import ua.nure.korabelska.agrolab.repository.ProjectRepository;
 import ua.nure.korabelska.agrolab.repository.UserRepository;
@@ -30,15 +32,17 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Project createProject(SaveProjectDto saveProjectDto) throws UserNotFoundException {
         Project project = new Project();
-        User manager = userRepository.findById(saveProjectDto.getManagerId())
-                .orElseThrow(() -> new UserNotFoundException(saveProjectDto.getManagerId()));
+        User manager = userRepository.findByUsername(saveProjectDto.getManagerUsername())
+                .orElseThrow(() -> new UserNotFoundException(saveProjectDto.getManagerUsername()));
+
         project.setManager(manager);
-
-        project.setMembers(collectMembers(saveProjectDto.getMembersId()));
-
+        project.setMembers(collectMembers(saveProjectDto.getUsernames()));
         project.setName(saveProjectDto.getName());
+        project.setStatus(Status.ACTIVE);
 
-        return project;
+        Project createdProject = projectRepository.save(project);
+
+        return createdProject;
     }
 
     @Override
@@ -53,8 +57,8 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Project updateProject(UpdateProjectDto updateProjectDto, Long id) throws UserNotFoundException {
         if(projectRepository.existsById(id)){
-            Project project = projectRepository.findById(id).orElse(null);
-            project.setMembers(collectMembers(updateProjectDto.getMembersId()));
+            Project project = projectRepository.findById(id).get();
+            project.setMembers(collectMembers(updateProjectDto.getUsernames()));
             project.setName(updateProjectDto.getName());
             return project;
         }
@@ -66,11 +70,11 @@ public class ProjectServiceImpl implements ProjectService {
         return projectRepository.findById(id).orElse(null);
     }
 
-    private Set<User> collectMembers(Set<Long> membersId) throws UserNotFoundException {
+    private Set<User> collectMembers(Set<String> members) throws UserNotFoundException {
         Set<User> users = new HashSet<>();
 
-        for (Long memberId : membersId) {
-            users.add(userRepository.findById(memberId).orElseThrow(() -> new UserNotFoundException(memberId)));
+        for (String memberName : members) {
+            users.add(userRepository.findByUsername(memberName).orElseThrow(() -> new UserNotFoundException(memberName)));
         }
         return users;
     }

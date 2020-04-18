@@ -1,6 +1,7 @@
 package ua.nure.korabelska.agrolab.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
+import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
 import ua.nure.korabelska.agrolab.model.User;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public interface UserService {
 
     List<User> getAll();
 
-    User findByUsername(String username);
+    User findByUsername(String username) throws UserNotFoundException;
 
     User findById(Long id);
 

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
 import ua.nure.korabelska.agrolab.model.Role;
 import ua.nure.korabelska.agrolab.model.Status;
 import ua.nure.korabelska.agrolab.model.User;
@@ -102,8 +103,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByUsername(String username) {
-        User result = userRepository.findByUsername(username);
+    public User findByUsername(String username) throws UserNotFoundException {
+        User result = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
         log.info("IN findByUsername - user: {} found by username: {}", result, username);
         return result;
     }

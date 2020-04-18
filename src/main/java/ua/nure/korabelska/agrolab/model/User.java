@@ -1,9 +1,6 @@
 package ua.nure.korabelska.agrolab.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,6 +27,7 @@ public class User extends BaseEntity {
     @Column(name = "email")
     private String email;
 
+    @JsonIgnore
     @Column(name = "password")
     @ToString.Exclude
     private String password;

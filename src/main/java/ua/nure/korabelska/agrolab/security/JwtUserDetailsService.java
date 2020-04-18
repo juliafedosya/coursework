@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
 import ua.nure.korabelska.agrolab.model.User;
 import ua.nure.korabelska.agrolab.security.jwt.JwtUser;
 import ua.nure.korabelska.agrolab.security.jwt.JwtUserFactory;
@@ -24,9 +25,10 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.findByUsername(username);
-
-        if (user == null) {
+        User user = null;
+        try {
+            user = userService.findByUsername(username);
+        } catch (UserNotFoundException e) {
             throw new UsernameNotFoundException("User with username: " + username + " not found");
         }
 
