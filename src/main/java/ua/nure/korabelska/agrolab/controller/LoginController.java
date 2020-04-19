@@ -2,12 +2,14 @@ package ua.nure.korabelska.agrolab.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.korabelska.agrolab.dto.AuthenticationRequestDto;
 import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
@@ -16,6 +18,7 @@ import ua.nure.korabelska.agrolab.model.User;
 import ua.nure.korabelska.agrolab.security.jwt.JwtTokenProvider;
 import ua.nure.korabelska.agrolab.service.UserService;
 
+import javax.validation.Valid;
 import java.util.*;
 
 @RestController
@@ -37,7 +40,13 @@ public class LoginController {
     }
 
     @PostMapping("login")
-    public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto) {
+    public ResponseEntity login(@Valid @RequestBody AuthenticationRequestDto requestDto, BindingResult bindingResult) {
+
+        if(bindingResult.hasErrors()) {
+            Map<String, List<String>> errors = ControllerUtils.getErrors(bindingResult);
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+
         try {
             log.info("hello");
             log.info(requestDto.toString());
@@ -73,20 +82,6 @@ public class LoginController {
     public ResponseEntity<List<User>> find() {
         return ResponseEntity.ok().body(userService.getAll());
     }
-
-//    @GetMapping("/projects")
-//    public ResponseEntity<List<Project>> findProjects() {
-//        List<Project> projects = new ArrayList<>();
-//        List<User> users = userService.getAll();
-//        for (User user:
-//             users) {
-//            for (Project project:
-//                user.getProjects() ) {
-//                projects.add(project);
-//            }
-//        }
-//        return ResponseEntity.ok().body(projects);
-//    }
 
 
 }

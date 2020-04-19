@@ -33,11 +33,11 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Project createProject(SaveProjectDto saveProjectDto) throws UserNotFoundException {
         Project project = new Project();
-        User manager = userRepository.findByUsername(saveProjectDto.getManagerUsername())
-                .orElseThrow(() -> new UserNotFoundException(saveProjectDto.getManagerUsername()));
+        User manager = userRepository.findById(saveProjectDto.getManagerId())
+                .orElseThrow(() -> new UserNotFoundException(saveProjectDto.getManagerId()));
 
         project.setManager(manager);
-        project.setMembers(collectMembers(saveProjectDto.getMembersUsername()));
+        project.setMembers(collectMembers(saveProjectDto.getMembersId()));
         project.setName(saveProjectDto.getName());
         project.setStatus(Status.ACTIVE);
 
@@ -64,7 +64,13 @@ public class ProjectServiceImpl implements ProjectService {
     public Boolean deleteProjectById(Long id) {
         Boolean exists = projectRepository.existsById(id);
         if(exists) {
-            projectRepository.deleteById(id);
+            log.info("Gonna delete project with id {}", id);
+                Project project = projectRepository.findById(id).get();
+                project.getManager().setManagerInProject(null);
+                project.getMembers().stream().forEach(member -> member.setParticipantInProject(null));
+                project.setManager(null);
+                project.setMembers(null);
+                projectRepository.deleteById(id);
         }
         return exists;
     }
@@ -73,7 +79,7 @@ public class ProjectServiceImpl implements ProjectService {
     public Project updateProject(UpdateProjectDto updateProjectDto, Long id) throws UserNotFoundException {
         if(projectRepository.existsById(id)){
             Project project = projectRepository.findById(id).get();
-            project.setMembers(collectMembers(updateProjectDto.getMembersUsername()));
+            project.setMembers(collectMembers(updateProjectDto.getMembersId()));
             project.setName(updateProjectDto.getName());
             project.getMembers()
                     .stream()
@@ -88,17 +94,14 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Project findProjectById(Long id) {
         Project project = projectRepository.findById(id).orElse(null);
-//        log.info("getting a project {}",project);
-//        log.info("project participants", project.getMembers());
-//        log.info("project manager", project.getManager());
         return project;
     }
 
-    private Set<User> collectMembers(Set<String> members) throws UserNotFoundException {
+    private Set<User> collectMembers(Set<Long> members) throws UserNotFoundException {
         Set<User> users = new HashSet<>();
 
-        for (String memberName : members) {
-            users.add(userRepository.findByUsername(memberName).orElseThrow(() -> new UserNotFoundException(memberName)));
+        for (Long memberId : members) {
+            users.add(userRepository.findById(memberId).orElseThrow(() -> new UserNotFoundException(memberId)));
         }
         return users;
     }

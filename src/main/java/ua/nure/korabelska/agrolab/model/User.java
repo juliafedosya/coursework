@@ -62,7 +62,7 @@ public class User extends BaseEntity {
             property = "id")
     @JsonIdentityReference(alwaysAsId = true)
     @ToString.Exclude
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "project_participant_id",referencedColumnName = "id")
     private Project participantInProject;
 

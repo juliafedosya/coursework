@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import ua.nure.korabelska.agrolab.model.User;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 
 @Data
@@ -25,11 +27,12 @@ public class RegistrationUserDto {
     private String firstName;
 
     @NotNull
-    @NotEmpty
+    @Email(message = "Email should be valid")
     private String email;
 
     @NotNull
     @NotEmpty
+    @Size(min = 6,max = 50)
     private String password;
 
     public User toUser() {

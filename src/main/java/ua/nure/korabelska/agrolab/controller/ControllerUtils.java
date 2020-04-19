@@ -3,17 +3,22 @@ package ua.nure.korabelska.agrolab.controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class ControllerUtils {
 
-    static Map<String, String> getErrors(BindingResult bindingResult) {
-        Collector<FieldError, ?, Map<String, String>> collector = Collectors.toMap(
-                fieldError -> fieldError.getField() + "Error",
-                FieldError::getDefaultMessage
-        );
-        return bindingResult.getFieldErrors().stream().collect(collector);
+    static Map<String, List<String>> getErrors(BindingResult bindingResult) {
+        Map<String, List<String>> fieldErrorWithMessages = bindingResult.getFieldErrors()
+                .stream()
+                .collect(Collectors.groupingBy(
+                        FieldError::getField,
+                        Collectors.mapping(
+                                fieldError -> fieldError.getDefaultMessage(),
+                                Collectors.toList())));
+        return fieldErrorWithMessages;
     }
+
 }

@@ -19,12 +19,12 @@ import java.util.Set;
 @NoArgsConstructor
 public class Project extends BaseEntity {
 
-    @OneToOne(mappedBy = "managerInProject")
+    @OneToOne(mappedBy = "managerInProject", cascade = CascadeType.REMOVE)
     private User manager;
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToMany(mappedBy = "participantInProject", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "participantInProject", cascade = CascadeType.REMOVE)
     private Set<User> members;
 
     @Column(name = "name")

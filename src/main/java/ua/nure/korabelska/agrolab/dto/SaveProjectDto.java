@@ -18,10 +18,10 @@ public class SaveProjectDto {
     private String name;
 
     @NotNull
-    private Set<Long> membersUsername;
+    private Set<@Min(1) Long> membersId;
 
     @NotNull
     @Min(1)
-    private String managerUsername;
+    private Long managerId;
 
 }
