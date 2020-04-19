@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Table(name = "cultures")
 @Entity
@@ -15,4 +14,16 @@ import javax.persistence.Table;
 @AllArgsConstructor
 public class Culture extends BaseEntity {
 
+    @Column(name = "name")
+    String name;
+
+    @Column(name = "description")
+    String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "plant_division")
+    private PlantDivision plantDivision;
+
+    @Column(name = "visible",columnDefinition = "boolean default false")
+    private Boolean visible;
 }

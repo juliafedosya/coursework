@@ -2,26 +2,21 @@ package ua.nure.korabelska.agrolab.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.korabelska.agrolab.dto.AuthenticationRequestDto;
-import ua.nure.korabelska.agrolab.dto.RegistrationUserDto;
-import ua.nure.korabelska.agrolab.dto.UserDto;
 import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
+import ua.nure.korabelska.agrolab.model.Project;
 import ua.nure.korabelska.agrolab.model.User;
 import ua.nure.korabelska.agrolab.security.jwt.JwtTokenProvider;
 import ua.nure.korabelska.agrolab.service.UserService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "api/v1/auth")
@@ -78,5 +73,20 @@ public class LoginController {
     public ResponseEntity<List<User>> find() {
         return ResponseEntity.ok().body(userService.getAll());
     }
+
+//    @GetMapping("/projects")
+//    public ResponseEntity<List<Project>> findProjects() {
+//        List<Project> projects = new ArrayList<>();
+//        List<User> users = userService.getAll();
+//        for (User user:
+//             users) {
+//            for (Project project:
+//                user.getProjects() ) {
+//                projects.add(project);
+//            }
+//        }
+//        return ResponseEntity.ok().body(projects);
+//    }
+
 
 }

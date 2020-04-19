@@ -18,7 +18,7 @@ public class SaveProjectDto {
     private String name;
 
     @NotNull
-    private Set<String> usernames;
+    private Set<Long> membersUsername;
 
     @NotNull
     @Min(1)

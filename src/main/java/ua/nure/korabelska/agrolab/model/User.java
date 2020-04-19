@@ -1,21 +1,23 @@
 package ua.nure.korabelska.agrolab.model;
 
 import com.fasterxml.jackson.annotation.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
 @Data
+@EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends BaseEntity {
-    @Column(name = "username")
+
+    @Column(name = "username",unique = true)
     private String username;
 
     @Column(name = "first_name")
@@ -45,14 +47,33 @@ public class User extends BaseEntity {
     )
     private List<Role> roles;
 
-//    @LazyCollection(LazyCollectionOption.FALSE)
-//    @OneToMany(targetEntity = Project.class)
-//    @JoinTable(
-//            name = "user_land_plots",
-//            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-//            inverseJoinColumns = {@JoinColumn(name = "land_plot_id", referencedColumnName = "id")}
-//    )
-//    private Set<Project> projects;
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
+    @ToString.Exclude
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "project_manager_id", referencedColumnName = "id")
+    private Project managerInProject;
+
+    @EqualsAndHashCode.Exclude
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
+    @ToString.Exclude
+    @ManyToOne
+    @JoinColumn(name = "project_participant_id",referencedColumnName = "id")
+    private Project participantInProject;
+
+//    @EqualsAndHashCode.Exclude
+//    @JsonIdentityInfo(
+//            generator = ObjectIdGenerators.PropertyGenerator.class,
+//            property = "name")
+//    @JsonIdentityReference(alwaysAsId = true)
+//    @ToString.Exclude
+//    @ManyToMany
+//    private Set<Project> participantInProjects;
 
 
 }
