@@ -1,6 +1,7 @@
 package ua.nure.korabelska.agrolab.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
+import ua.nure.korabelska.agrolab.dto.RegistrationUserDto;
 import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
 import ua.nure.korabelska.agrolab.model.User;
 
@@ -11,6 +12,8 @@ public interface UserService {
     User register(User user);
 
     User registerAdmin(User user);
+
+    User updateUser(Long id, RegistrationUserDto dto) throws UserNotFoundException;
 
     List<User> getAll();
 

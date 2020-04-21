@@ -26,4 +26,5 @@ public class Culture extends BaseEntity {
 
     @Column(name = "visible",columnDefinition = "boolean default false")
     private Boolean visible;
+
 }

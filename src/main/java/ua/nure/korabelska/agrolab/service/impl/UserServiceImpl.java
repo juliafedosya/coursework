@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import ua.nure.korabelska.agrolab.dto.RegistrationUserDto;
 import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
 import ua.nure.korabelska.agrolab.model.Role;
 import ua.nure.korabelska.agrolab.model.Status;
@@ -92,6 +93,21 @@ public class UserServiceImpl implements UserService {
         log.info("IN Register – ADMIN: {} successfully created", registeredUser);
 
         return registeredUser;
+    }
+
+    @Override
+    public User updateUser(Long id, RegistrationUserDto dto) throws UserNotFoundException {
+        if(userRepository.existsById(id)) {
+            User current = userRepository.findById(id).get();
+            current.setUsername(dto.getUsername());
+            current.setEmail(dto.getEmail());
+            current.setFirstName(dto.getFirstName());
+            current.setLastName(dto.getLastName());
+            current.setPassword(dto.getPassword());
+           current = userRepository.save(current);
+           return current;
+        }
+        throw new UserNotFoundException(id);
     }
 
 
