@@ -29,6 +29,12 @@ public class Project extends BaseEntity {
 
     @Column(name = "name")
     private String name;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
+    private Set<Culture> cultures;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
+    private Set<TestArea> testAreas;
 //    @JsonIdentityInfo(
 //            generator = ObjectIdGenerators.PropertyGenerator.class,
 //            property = "name")

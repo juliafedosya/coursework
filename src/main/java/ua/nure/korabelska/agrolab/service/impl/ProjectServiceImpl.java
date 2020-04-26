@@ -31,10 +31,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project createProject(SaveProjectDto saveProjectDto) throws UserNotFoundException {
+    public Project createProject(SaveProjectDto saveProjectDto, User manager) throws UserNotFoundException {
         Project project = new Project();
-        User manager = userRepository.findById(saveProjectDto.getManagerId())
-                .orElseThrow(() -> new UserNotFoundException(saveProjectDto.getManagerId()));
 
         project.setManager(manager);
         project.setMembers(collectMembers(saveProjectDto.getMembersId()));
