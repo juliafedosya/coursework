@@ -43,6 +43,21 @@ public class ProjectController {
         return ResponseEntity.ok().body(projectService.findProjectById(id));
     }
 
+    @GetMapping("/current")
+    public ResponseEntity<Object> getAllProjectsForCurrentUser(HttpServletRequest request) {
+
+        String username = jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
+        User manager = null;
+        try {
+            manager = userService.findByUsername(username);
+        } catch (UserNotFoundException e) {
+
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+        List<Project> projects = projectService.findAllByManager(manager);
+        return ResponseEntity.ok().body(projects);
+    }
+
     @PostMapping
     public ResponseEntity<Object> createProject(@Valid @RequestBody SaveProjectDto saveProjectDto,
                                                 BindingResult bindingResult, HttpServletRequest request) {

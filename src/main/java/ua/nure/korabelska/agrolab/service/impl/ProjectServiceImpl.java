@@ -14,6 +14,7 @@ import ua.nure.korabelska.agrolab.repository.UserRepository;
 import ua.nure.korabelska.agrolab.service.ProjectService;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -93,6 +94,13 @@ public class ProjectServiceImpl implements ProjectService {
     public Project findProjectById(Long id) {
         Project project = projectRepository.findById(id).orElse(null);
         return project;
+    }
+
+    public List<Project> findAllByManager(User manager) {
+        log.info("manager id {}",manager.getId());
+        List<Project> projects = projectRepository.findByManagerId(manager.getId());
+        log.info("projects length {}",projects.size());
+        return projects;
     }
 
     private Set<User> collectMembers(Set<Long> members) throws UserNotFoundException {
