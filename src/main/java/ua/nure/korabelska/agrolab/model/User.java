@@ -2,12 +2,8 @@ package ua.nure.korabelska.agrolab.model;
 
 import com.fasterxml.jackson.annotation.*;
 import lombok.*;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -47,6 +43,7 @@ public class User extends BaseEntity {
     )
     private List<Role> roles;
 
+    @EqualsAndHashCode.Exclude
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
@@ -65,15 +62,5 @@ public class User extends BaseEntity {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "project_participant_id",referencedColumnName = "id")
     private Project participantInProject;
-
-//    @EqualsAndHashCode.Exclude
-//    @JsonIdentityInfo(
-//            generator = ObjectIdGenerators.PropertyGenerator.class,
-//            property = "name")
-//    @JsonIdentityReference(alwaysAsId = true)
-//    @ToString.Exclude
-//    @ManyToMany
-//    private Set<Project> participantInProjects;
-
 
 }

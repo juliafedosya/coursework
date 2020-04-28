@@ -19,13 +19,9 @@ public class SaveCultureDto {
     @Size(max = 240)
     private String description;
 
-    @NotEmpty
     @NotNull
     private PlantDivision plantDivision;
 
     private Boolean visible;
-
-    @NotNull
-    private Set<@Min(1) Long> testAreasId;
 
 }

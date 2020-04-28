@@ -31,6 +31,7 @@ public class Project extends BaseEntity {
     private String name;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
+    @ToString.Exclude
     private Set<Culture> cultures;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)

@@ -20,8 +20,4 @@ public class SaveProjectDto {
     @NotNull
     private Set<@Min(1) Long> membersId;
 
-//    @NotNull
-//    @Min(1)
-//    private Long managerId;
-
 }

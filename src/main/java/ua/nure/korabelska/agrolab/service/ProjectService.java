@@ -14,6 +14,7 @@ public interface ProjectService {
     Boolean deleteProjectById(Long id);
     Project updateProject(UpdateProjectDto saveProjectDto, Long Id) throws UserNotFoundException;
     Project findProjectById(Long id);
-    List<Project> findAllByManager(User manager);
-
+    Project findByMember(User member);
+    Project findProjectByManager(User manager);
+    Project findProjectByUser(User user);
 }

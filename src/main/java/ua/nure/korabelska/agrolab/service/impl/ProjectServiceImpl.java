@@ -14,7 +14,6 @@ import ua.nure.korabelska.agrolab.repository.UserRepository;
 import ua.nure.korabelska.agrolab.service.ProjectService;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -96,11 +95,31 @@ public class ProjectServiceImpl implements ProjectService {
         return project;
     }
 
-    public List<Project> findAllByManager(User manager) {
+    public Project findByMember(User member) {
+        log.info("member id {}",member.getId());
+        Project project = projectRepository.findByMembersId(member.getId());
+        log.info("project {}",project);
+        return project;
+    }
+
+    @Override
+    public Project findProjectByManager(User manager) {
         log.info("manager id {}",manager.getId());
-        List<Project> projects = projectRepository.findByManagerId(manager.getId());
-        log.info("projects length {}",projects.size());
-        return projects;
+        Project project = projectRepository.findByManagerId(manager.getId());
+        log.info("project {}",project);
+        return project;
+    }
+
+    @Override
+    public Project findProjectByUser(User user) {
+        Project managerInProject = projectRepository.findByManagerId(user.getId());
+        Project participantInProject = projectRepository.findByMembersId(user.getId());
+
+        if(managerInProject != null) {
+            return managerInProject;
+        }
+
+        return participantInProject;
     }
 
     private Set<User> collectMembers(Set<Long> members) throws UserNotFoundException {

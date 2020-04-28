@@ -41,6 +41,7 @@ public class Culture extends BaseEntity {
     @OneToMany(mappedBy = "culture", cascade = CascadeType.REMOVE)
     private Set<TestArea>  testAreas;
 
+    @EqualsAndHashCode.Exclude
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")

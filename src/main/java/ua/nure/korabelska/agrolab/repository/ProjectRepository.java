@@ -8,7 +8,10 @@ import java.util.List;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project,Long> {
-    List<Project> findByManagerId(Long managerId);
+    Project findByMembersId(Long memberId);
 
-    Project findByIdAndManagerId(Long projectId, Long managerId);
+    Project findByManagerId(Long managerId);
+
+
 }
+
