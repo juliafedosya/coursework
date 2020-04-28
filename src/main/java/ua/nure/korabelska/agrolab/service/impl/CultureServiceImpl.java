@@ -7,6 +7,7 @@ import ua.nure.korabelska.agrolab.dto.SaveCultureDto;
 import ua.nure.korabelska.agrolab.dto.UpdateCultureDto;
 import ua.nure.korabelska.agrolab.model.Culture;
 import ua.nure.korabelska.agrolab.model.Project;
+import ua.nure.korabelska.agrolab.model.Status;
 import ua.nure.korabelska.agrolab.repository.CultureRepository;
 import ua.nure.korabelska.agrolab.service.CultureService;
 
@@ -32,6 +33,7 @@ public class CultureServiceImpl implements CultureService {
         culture.setPlantDivision(cultureDto.getPlantDivision());
         culture.setProject(project);
         culture.setVisible(cultureDto.getVisible());
+        culture.setStatus(Status.ACTIVE);
         culture = cultureRepository.save(culture);
         log.info("culture  - {}",culture);
         return culture;
@@ -44,7 +46,7 @@ public class CultureServiceImpl implements CultureService {
             culture.setVisible(cultureDto.getVisible());
             culture.setDescription(cultureDto.getDescription());
             culture.setName(cultureDto.getName());
-            cultureRepository.save(culture);
+          return cultureRepository.save(culture);
         }
         return null;
     }

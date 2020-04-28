@@ -6,16 +6,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ua.nure.korabelska.agrolab.dto.SaveCultureDto;
-import ua.nure.korabelska.agrolab.dto.SaveProjectDto;
-import ua.nure.korabelska.agrolab.dto.UpdateProjectDto;
+import ua.nure.korabelska.agrolab.dto.*;
 import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
 import ua.nure.korabelska.agrolab.model.Culture;
 import ua.nure.korabelska.agrolab.model.Project;
+import ua.nure.korabelska.agrolab.model.TestArea;
 import ua.nure.korabelska.agrolab.model.User;
 import ua.nure.korabelska.agrolab.security.jwt.JwtTokenProvider;
 import ua.nure.korabelska.agrolab.service.CultureService;
 import ua.nure.korabelska.agrolab.service.ProjectService;
+import ua.nure.korabelska.agrolab.service.TestAreaService;
 import ua.nure.korabelska.agrolab.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,19 +28,22 @@ import java.util.Map;
 @Slf4j
 public class ProjectController {
 
-    ProjectService projectService;
+    private final ProjectService projectService;
 
-    UserService userService;
+    private final UserService userService;
 
-    CultureService cultureService;
+    private final CultureService cultureService;
+
+    private final TestAreaService testAreaService;
 
     private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public ProjectController(ProjectService projectService, UserService userService, CultureService cultureService, JwtTokenProvider jwtTokenProvider) {
+    public ProjectController(ProjectService projectService, UserService userService, CultureService cultureService,TestAreaService testAreaService, JwtTokenProvider jwtTokenProvider) {
         this.projectService = projectService;
         this.userService = userService;
         this.cultureService = cultureService;
+        this.testAreaService = testAreaService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -99,30 +102,6 @@ public class ProjectController {
         return ResponseEntity.ok(project.getCultures());
     }
 
-    @PostMapping("/current/{id}/cultures")
-    public ResponseEntity<Object> createCulture(@PathVariable Long id, @RequestBody @Valid SaveCultureDto cultureDto, HttpServletRequest request, BindingResult bindingResult) {
-        String username = jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
-        User user;
-        try {
-            user = userService.findByUsername(username);
-        } catch (UserNotFoundException e) {
-
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
-        }
-        if(bindingResult.hasErrors()) {
-            Map<String, List<String>> errors = ControllerUtils.getErrors(bindingResult);
-            return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
-        }
-
-        Project project = projectService.findProjectByUser(user);
-        if(project == null) {
-            return ResponseEntity.notFound().build();
-        }
-        Culture culture = cultureService.createCulture(cultureDto,project);
-        log.info("{}",culture);
-        return ResponseEntity.ok(culture);
-    }
-
     @PostMapping
     public ResponseEntity<Object> createProject(@Valid @RequestBody SaveProjectDto saveProjectDto,
                                                 BindingResult bindingResult, HttpServletRequest request) {
@@ -147,6 +126,54 @@ public class ProjectController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 
+    }
+
+    @PostMapping("/current/{id}/cultures")
+    public ResponseEntity<Object> createCulture(@PathVariable Long id, @RequestBody @Valid SaveCultureDto cultureDto, HttpServletRequest request, BindingResult bindingResult) {
+        String username = jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
+        User user;
+        try {
+            user = userService.findByUsername(username);
+        } catch (UserNotFoundException e) {
+
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+        if(bindingResult.hasErrors()) {
+            Map<String, List<String>> errors = ControllerUtils.getErrors(bindingResult);
+            return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
+        }
+
+        Project project = projectService.findProjectByUser(user);
+        if(project == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Culture culture = cultureService.createCulture(cultureDto,project);
+        log.info("{}",culture);
+        return ResponseEntity.ok(culture);
+    }
+
+    @PostMapping("/current/{id}/testAreas")
+    public ResponseEntity<Object> createTestArea(@PathVariable Long id, @RequestBody @Valid SaveTestAreaDto testAreaDto, HttpServletRequest request, BindingResult bindingResult) {
+        String username = jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
+        User user;
+        try {
+            user = userService.findByUsername(username);
+        } catch (UserNotFoundException e) {
+
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+        if(bindingResult.hasErrors()) {
+            Map<String, List<String>> errors = ControllerUtils.getErrors(bindingResult);
+            return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
+        }
+
+        Project project = projectService.findProjectByUser(user);
+        if(project == null) {
+            return ResponseEntity.notFound().build();
+        }
+        TestArea testArea = testAreaService.createTestArea(testAreaDto,project);
+        log.info("{}",testArea);
+        return new ResponseEntity<>(testArea,HttpStatus.CREATED);
     }
 
     @PatchMapping("/current/manager/{id}")
@@ -179,6 +206,35 @@ public class ProjectController {
         } catch (UserNotFoundException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @PatchMapping("/current/{id}/cultures/{cultureId}")
+    public ResponseEntity<Object> updateCulture(@PathVariable Long id, @PathVariable Long cultureId,
+                                                @RequestBody @Valid UpdateCultureDto cultureDto,
+                                                HttpServletRequest request, BindingResult bindingResult) {
+        String username = jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
+        User user;
+        try {
+            user = userService.findByUsername(username);
+        } catch (UserNotFoundException e) {
+
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+        if(bindingResult.hasErrors()) {
+            Map<String, List<String>> errors = ControllerUtils.getErrors(bindingResult);
+            return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
+        }
+
+        Project project = projectService.findProjectByUser(user);
+        if(project == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Culture culture = cultureService.updateCulture(cultureDto,cultureId);
+        if(culture == null) {
+            return ResponseEntity.notFound().build();
+        }
+        log.info("{}",culture);
+        return ResponseEntity.ok(culture);
     }
 
     @DeleteMapping("/current/manager/{id}")

@@ -20,6 +20,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String REGISTER_ENDPOINT = "/api/v1/register/**";
     private static final String PROJECT_ENDPOINT = "/api/v1/project/**";
     private static final String USER_ENDPOINT = "/api/v1/users/**";
+    private static final String CULTURE_ENDPOINT = "/api/v1/cultures/**";
 
 
     @Autowired
@@ -47,6 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(LOGIN_ENDPOINT).permitAll()
                 .antMatchers(PROJECT_ENDPOINT).hasRole("USER")
                 .antMatchers(USER_ENDPOINT).hasRole("USER")
+                .antMatchers(CULTURE_ENDPOINT).hasRole("USER")
                 .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
