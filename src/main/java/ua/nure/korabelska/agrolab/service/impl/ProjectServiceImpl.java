@@ -49,10 +49,10 @@ public class ProjectServiceImpl implements ProjectService {
                 members.stream()
                 .forEach(member -> member
                         .setParticipantInProject(createdProject));
-                members.stream()
-                .forEach(member -> userRepository.save(member));
+//                members.stream()
+//                .forEach(member -> userRepository.save(member));
 
-        log.info("adding members {}",members);
+//        log.info("adding members {}",members);
         log.info("manager {}",manager);
 
         return createdProject;
@@ -111,15 +111,20 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project findProjectByUser(User user) {
-        Project managerInProject = projectRepository.findByManagerId(user.getId());
-        Project participantInProject = projectRepository.findByMembersId(user.getId());
+    public Project findProjectByUser(User user,Long id) {
+        Project managerInProject = user.getManagerInProject();
+        Project participantInProject = user.getParticipantInProject();
 
-        if(managerInProject != null) {
+        if(managerInProject != null && managerInProject.getId().equals(id)) {
             return managerInProject;
         }
 
         return participantInProject;
+    }
+
+    @Override
+    public Iterable<Project> findAll() {
+        return projectRepository.findAll();
     }
 
     private Set<User> collectMembers(Set<Long> members) throws UserNotFoundException {

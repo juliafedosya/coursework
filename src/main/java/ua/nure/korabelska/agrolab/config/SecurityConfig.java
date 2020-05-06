@@ -21,6 +21,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String PROJECT_ENDPOINT = "/api/v1/project/**";
     private static final String USER_ENDPOINT = "/api/v1/users/**";
     private static final String CULTURE_ENDPOINT = "/api/v1/cultures/**";
+    private static final String DEVICES_ENDPOINT = "/api/v1/devices/**";
 
 
     @Autowired
@@ -50,6 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(USER_ENDPOINT).hasRole("USER")
                 .antMatchers(CULTURE_ENDPOINT).hasRole("USER")
                 .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
+                .antMatchers(DEVICES_ENDPOINT).hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));

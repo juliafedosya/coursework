@@ -16,5 +16,6 @@ public interface ProjectService {
     Project findProjectById(Long id);
     Project findByMember(User member);
     Project findProjectByManager(User manager);
-    Project findProjectByUser(User user);
+    Project findProjectByUser(User user,Long id);
+    Iterable<Project> findAll();
 }

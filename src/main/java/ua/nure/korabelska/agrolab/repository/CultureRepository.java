@@ -8,6 +8,6 @@ import java.util.List;
 public interface CultureRepository extends JpaRepository<Culture,Long> {
     public List<Culture> findByVisibleTrue();
     public Culture findByIdAndVisible(Long id, Boolean visible);
-    public List<Culture> findByIdAndProjectId(Long id, Long projectId);
+    public Culture findByIdAndProjectId(Long id, Long projectId);
     public List<Culture> findByProjectId(Long projectId);
 }

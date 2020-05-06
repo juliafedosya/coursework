@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.korabelska.agrolab.dto.AdminUserDto;
+import ua.nure.korabelska.agrolab.model.Project;
 import ua.nure.korabelska.agrolab.model.User;
+import ua.nure.korabelska.agrolab.service.ProjectService;
 import ua.nure.korabelska.agrolab.service.UserService;
 
 import java.util.List;
@@ -15,11 +17,14 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "api/v1/admin")
 public class AdminController {
+
     private final UserService userService;
+    private final ProjectService projectService;
 
     @Autowired
-    public AdminController(UserService userService) {
+    public AdminController(UserService userService, ProjectService projectService) {
         this.userService = userService;
+        this.projectService = projectService;
     }
 
     @GetMapping("/users/{id}")
@@ -40,5 +45,10 @@ public class AdminController {
         List<User> users = userService.getAll();
         List<AdminUserDto> userDtos = users.stream().map(AdminUserDto::fromUser).collect(Collectors.toList());
         return ResponseEntity.ok().body(userDtos);
+    }
+
+    @GetMapping("/projects")
+    public Iterable<Project> getAllProjects() {
+        return projectService.findAll();
     }
 }

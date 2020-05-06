@@ -1,11 +1,17 @@
 package ua.nure.korabelska.agrolab.controller;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import ua.nure.korabelska.agrolab.dto.*;
 import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
 import ua.nure.korabelska.agrolab.model.Culture;
@@ -22,11 +28,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/project")
 @Slf4j
 public class ProjectController {
+
+    private static final String DEVICES_ENDPOINT = "http://localhost:8090/devices/";
 
     private final ProjectService projectService;
 
@@ -38,6 +47,10 @@ public class ProjectController {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+    private final RestTemplate restTemplate;
+
+    private final HttpComponentsClientHttpRequestFactory requestFactory;
+
     @Autowired
     public ProjectController(ProjectService projectService, UserService userService, CultureService cultureService,TestAreaService testAreaService, JwtTokenProvider jwtTokenProvider) {
         this.projectService = projectService;
@@ -45,6 +58,8 @@ public class ProjectController {
         this.cultureService = cultureService;
         this.testAreaService = testAreaService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.restTemplate = new RestTemplate();
+        this.requestFactory = new HttpComponentsClientHttpRequestFactory();
     }
 
     @GetMapping("/current/manager")
@@ -95,11 +110,115 @@ public class ProjectController {
 
             return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
         }
-        Project project = projectService.findProjectByUser(user);
+        Project project = projectService.findProjectByUser(user,id);
         if(project == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(project.getCultures());
+    }
+
+    @GetMapping("/current/{id}/cultures/{cultureId}")
+    public ResponseEntity<?> getCultureByProjectAndCurrentUserAndId(HttpServletRequest request,@PathVariable Long id,@PathVariable Long cultureId) {
+        String username = jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
+        User user;
+        try {
+            user = userService.findByUsername(username);
+        } catch (UserNotFoundException e) {
+
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+        Project project = projectService.findProjectByUser(user,id);
+        if(project == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Optional<Culture> culture = project.getCultures().stream().filter(c -> c.getId().equals(id)).findFirst();
+        return culture.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/current/{id}/testAreas")
+    public ResponseEntity<Object> getTestAreasByProjectAndCurrentUser(HttpServletRequest request,@PathVariable Long id) {
+        String username = jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
+        User user;
+        try {
+            user = userService.findByUsername(username);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+        Project project = projectService.findProjectByUser(user,id);
+        if(project == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(project.getTestAreas());
+    }
+
+    @GetMapping("/current/{id}/testAreas/{testAreaId}")
+    public ResponseEntity<?> getTestAreaByProjectAndCurrentUserAndId(HttpServletRequest request, @PathVariable Long id, @PathVariable Long testAreaId) {
+        String username = jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
+        User user;
+        try {
+            user = userService.findByUsername(username);
+        } catch (UserNotFoundException e) {
+
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+        Project project = projectService.findProjectByUser(user,id);
+        if(project == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Optional<TestArea> testArea = project.getTestAreas().stream().filter(t -> t.getId().equals(testAreaId)).findFirst();
+       return testArea.map(ResponseEntity::ok)
+               .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/current/{id}/deviceData/{testAreaId}")
+    public ResponseEntity<?> getTestAreaDataByProjectAndCurrentUserAndId(HttpServletRequest request, @PathVariable Long id, @PathVariable Long testAreaId) {
+        String username = jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
+        User user;
+        try {
+            user = userService.findByUsername(username);
+        } catch (UserNotFoundException e) {
+
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+        Project project = projectService.findProjectByUser(user,id);
+        if(project == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Optional<TestArea> testArea = project.getTestAreas().stream().filter(t -> t.getId().equals(testAreaId)).findFirst();
+        if(testArea.isPresent()) {
+            return restTemplate.getForEntity(DEVICES_ENDPOINT + testAreaId,String.class);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PatchMapping("/current/{id}/deviceData/{testAreaId}")
+    public ResponseEntity<?> updateTestAreaDataByProjectAndCurrentUserAndId(HttpServletRequest request, @PathVariable Long id, @PathVariable Long testAreaId,
+                                                                            @RequestBody DeviceDto deviceDto) {
+        String username = jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
+        User user;
+        try {
+            user = userService.findByUsername(username);
+        } catch (UserNotFoundException e) {
+
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+        Project project = projectService.findProjectByUser(user,id);
+        if(project == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Optional<TestArea> testArea = project.getTestAreas().stream().filter(t -> t.getId().equals(testAreaId)).findFirst();
+        if(testArea.isPresent()) {
+            HttpEntity<DeviceDto> requestEntity = new HttpEntity<>(deviceDto);
+            restTemplate.setRequestFactory(requestFactory);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(DEVICES_ENDPOINT + testAreaId);
+            ResponseEntity<?> response  = restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.PATCH,
+                    requestEntity,
+                    String.class);
+            return response;
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
@@ -143,7 +262,7 @@ public class ProjectController {
             return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
         }
 
-        Project project = projectService.findProjectByUser(user);
+        Project project = projectService.findProjectByUser(user,id);
         if(project == null) {
             return ResponseEntity.notFound().build();
         }
@@ -167,7 +286,7 @@ public class ProjectController {
             return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
         }
 
-        Project project = projectService.findProjectByUser(user);
+        Project project = projectService.findProjectByUser(user,id);
         if(project == null) {
             return ResponseEntity.notFound().build();
         }
@@ -225,7 +344,7 @@ public class ProjectController {
             return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
         }
 
-        Project project = projectService.findProjectByUser(user);
+        Project project = projectService.findProjectByUser(user,id);
         if(project == null) {
             return ResponseEntity.notFound().build();
         }
@@ -236,6 +355,33 @@ public class ProjectController {
         log.info("{}",culture);
         return ResponseEntity.ok(culture);
     }
+
+    @PatchMapping("/current/{id}/testAreas/{testAreaId}")
+    public ResponseEntity<Object> updateTestArea(@PathVariable("id") Long projectId, @PathVariable Long testAreaId,
+                                                @RequestBody @Valid UpdateTestAreaDto testAreaDto,
+                                                HttpServletRequest request, BindingResult bindingResult) {
+
+        String username = jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
+        User user;
+        try {
+            user = userService.findByUsername(username);
+        } catch (UserNotFoundException e) {
+
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+        if(bindingResult.hasErrors()) {
+            Map<String, List<String>> errors = ControllerUtils.getErrors(bindingResult);
+            return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
+        }
+
+        TestArea testArea = testAreaService.findTestAreaByIdAndProjectId(testAreaId,projectId);
+        if(testArea == null) {
+            return ResponseEntity.notFound().build();
+        }
+        testArea = testAreaService.updateTestArea(testAreaDto,testArea,projectId);
+        return ResponseEntity.ok(testArea);
+    }
+
 
     @DeleteMapping("/current/manager/{id}")
     public ResponseEntity deleteProject(@PathVariable Long id, HttpServletRequest request) {

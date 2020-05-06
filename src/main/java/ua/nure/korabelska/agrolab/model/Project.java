@@ -34,6 +34,7 @@ public class Project extends BaseEntity {
     @ToString.Exclude
     private Set<Culture> cultures;
 
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
     private Set<TestArea> testAreas;
 //    @JsonIdentityInfo(
