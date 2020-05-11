@@ -15,6 +15,7 @@ public class UserDto {
     private String firstName;
     private String email;
     private Date registrationDate;
+    private boolean isAdmin;
 
     public User toUser() {
         User user = new User();
@@ -38,6 +39,7 @@ public class UserDto {
         userDto.setLastName(user.getLastName());
         userDto.setEmail(user.getEmail());
         userDto.setRegistrationDate(user.getCreated());
+        userDto.setAdmin(user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN")));
 
         return userDto;
     }
