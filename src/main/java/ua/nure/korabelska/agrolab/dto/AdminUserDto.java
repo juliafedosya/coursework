@@ -2,6 +2,7 @@ package ua.nure.korabelska.agrolab.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import ua.nure.korabelska.agrolab.model.Role;
 import ua.nure.korabelska.agrolab.model.Status;
 import ua.nure.korabelska.agrolab.model.User;
 
@@ -15,6 +16,7 @@ public class AdminUserDto {
         private String firstName;
         private String email;
         private String status;
+        private boolean isAdmin;
 
         public User toUser() {
             User user = new User();
@@ -38,6 +40,7 @@ public class AdminUserDto {
             adminUserDto.setLastName(user.getLastName());
             adminUserDto.setEmail(user.getEmail());
             adminUserDto.setStatus(user.getStatus().name());
+            adminUserDto.setAdmin(user.getRoles().stream().filter(role -> role.getName().equals("ROLE_ADMIN")).findFirst().isPresent());
 
             return adminUserDto;
         }
