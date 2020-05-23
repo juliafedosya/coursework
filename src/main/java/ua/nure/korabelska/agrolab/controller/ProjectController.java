@@ -1,6 +1,5 @@
 package ua.nure.korabelska.agrolab.controller;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -186,11 +185,13 @@ public class ProjectController {
         }
         Optional<TestArea> testArea = project.getTestAreas().stream().filter(t -> t.getId().equals(testAreaId)).findFirst();
         if(testArea.isPresent()) {
-            return restTemplate.getForEntity(DEVICES_ENDPOINT + testAreaId,String.class);
+//            return restTemplate.getForEntity(DEVICES_ENDPOINT + testAreaId,String.class);
+            return ResponseEntity.ok(testArea);
         }
         return ResponseEntity.notFound().build();
     }
 
+    //TODO: FIX IOT
     @PatchMapping("/current/{id}/deviceData/{testAreaId}")
     public ResponseEntity<?> updateTestAreaDataByProjectAndCurrentUserAndId(HttpServletRequest request, @PathVariable Long id, @PathVariable Long testAreaId,
                                                                             @RequestBody DeviceDto deviceDto) {
