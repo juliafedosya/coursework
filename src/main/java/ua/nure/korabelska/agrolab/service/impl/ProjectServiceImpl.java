@@ -123,6 +123,18 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public Project findProjectByUser(User user) {
+        Project managerInProject = user.getManagerInProject();
+        Project participantInProject = user.getParticipantInProject();
+
+        if(managerInProject != null) {
+            return managerInProject;
+        }
+
+        return participantInProject;
+    }
+
+    @Override
     public Iterable<Project> findAll() {
         return projectRepository.findAll();
     }

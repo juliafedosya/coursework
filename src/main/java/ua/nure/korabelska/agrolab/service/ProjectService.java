@@ -6,7 +6,6 @@ import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
 import ua.nure.korabelska.agrolab.model.Project;
 import ua.nure.korabelska.agrolab.model.User;
 
-import java.util.List;
 
 public interface ProjectService {
 
@@ -17,5 +16,6 @@ public interface ProjectService {
     Project findByMember(User member);
     Project findProjectByManager(User manager);
     Project findProjectByUser(User user,Long id);
+    Project findProjectByUser(User user);
     Iterable<Project> findAll();
 }

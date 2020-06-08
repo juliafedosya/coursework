@@ -13,7 +13,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.korabelska.agrolab.dto.AuthenticationRequestDto;
 import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
-import ua.nure.korabelska.agrolab.model.Project;
 import ua.nure.korabelska.agrolab.model.User;
 import ua.nure.korabelska.agrolab.security.jwt.JwtTokenProvider;
 import ua.nure.korabelska.agrolab.service.UserService;
