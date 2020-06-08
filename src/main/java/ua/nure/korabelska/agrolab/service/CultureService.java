@@ -12,6 +12,7 @@ public interface CultureService {
 
     Culture createCulture(SaveCultureDto cultureDto, Project project);
     Culture updateCulture(UpdateCultureDto cultureDto, Long Id);
+    Culture updateCulture(Culture culture,UpdateCultureDto cultureDto);
     Culture findCultureByIdAndVisible(Long id);
     List<Culture> findAllCulturesVisible();
     List<Culture> findCulturesByProject(Long projectId);

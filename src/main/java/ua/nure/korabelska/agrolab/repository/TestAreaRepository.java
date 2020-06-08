@@ -9,7 +9,6 @@ import java.util.Optional;
 public interface TestAreaRepository extends JpaRepository<TestArea,Long> {
 
     List<TestArea> findAllByProjectId(Long id);
-    TestArea findByIdAndProjectId(Long id, Long projectId);
 //    Optional<TestArea> findByIdAndProjectId(Long id, Long projectId);
 
 }

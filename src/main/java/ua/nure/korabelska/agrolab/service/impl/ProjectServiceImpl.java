@@ -34,26 +34,22 @@ public class ProjectServiceImpl implements ProjectService {
     public Project createProject(SaveProjectDto saveProjectDto, User manager) throws UserNotFoundException {
         Project project = new Project();
 
-        project.setManager(manager);
         project.setMembers(collectMembers(saveProjectDto.getMembersId()));
+        project.addMember(manager);
         project.setName(saveProjectDto.getName());
         project.setStatus(Status.ACTIVE);
 
-        Project createdProject = projectRepository.save(project);
-
-        manager.setManagerInProject(createdProject);
+        manager.setParticipantInProject(project);
         userRepository.save(manager);
 
-        Set<User> members = createdProject.getMembers();
+        Set<User> members = project.getMembers();
 
                 members.stream()
                 .forEach(member -> member
-                        .setParticipantInProject(createdProject));
-//                members.stream()
-//                .forEach(member -> userRepository.save(member));
-
-//        log.info("adding members {}",members);
+                        .setParticipantInProject(project));
         log.info("manager {}",manager);
+
+        Project createdProject = projectRepository.save(project);
 
         return createdProject;
     }
@@ -64,9 +60,7 @@ public class ProjectServiceImpl implements ProjectService {
         if(exists) {
             log.info("Gonna delete project with id {}", id);
                 Project project = projectRepository.findById(id).get();
-                project.getManager().setManagerInProject(null);
-                project.getMembers().stream().forEach(member -> member.setParticipantInProject(null));
-                project.setManager(null);
+                project.getMembers().forEach(member -> member.setParticipantInProject(null));
                 project.setMembers(null);
                 projectRepository.deleteById(id);
         }
@@ -80,7 +74,6 @@ public class ProjectServiceImpl implements ProjectService {
             project.setMembers(collectMembers(updateProjectDto.getMembersId()));
             project.setName(updateProjectDto.getName());
             project.getMembers()
-                    .stream()
                     .forEach(member -> member
                             .setParticipantInProject(project));
             projectRepository.save(project);
@@ -90,48 +83,28 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public Project updateProject(UpdateProjectDto projectDto, Project project, User current)
+        throws UserNotFoundException {
+        project.setMembers(collectMembers(projectDto.getMembersId()));
+        project.setName(projectDto.getName());
+        project.getMembers()
+            .forEach(member -> member
+                .setParticipantInProject(project));
+        project.addMember(current);
+        projectRepository.save(project);
+        return project;
+    }
+
+    @Override
     public Project findProjectById(Long id) {
         Project project = projectRepository.findById(id).orElse(null);
         return project;
     }
 
-    public Project findByMember(User member) {
-        log.info("member id {}",member.getId());
-        Project project = projectRepository.findByMembersId(member.getId());
-        log.info("project {}",project);
-        return project;
-    }
-
-    @Override
-    public Project findProjectByManager(User manager) {
-        log.info("manager id {}",manager.getId());
-        Project project = projectRepository.findByManagerId(manager.getId());
-        log.info("project {}",project);
-        return project;
-    }
-
-    @Override
-    public Project findProjectByUser(User user,Long id) {
-        Project managerInProject = user.getManagerInProject();
-        Project participantInProject = user.getParticipantInProject();
-
-        if(managerInProject != null && managerInProject.getId().equals(id)) {
-            return managerInProject;
-        }
-
-        return participantInProject;
-    }
-
     @Override
     public Project findProjectByUser(User user) {
-        Project managerInProject = user.getManagerInProject();
         Project participantInProject = user.getParticipantInProject();
-
-        if(managerInProject != null) {
-            return managerInProject;
-        }
-
-        return participantInProject;
+        return projectRepository.findById(participantInProject.getId()).orElse(null);
     }
 
     @Override

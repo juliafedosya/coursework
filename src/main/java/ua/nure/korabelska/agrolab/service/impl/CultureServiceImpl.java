@@ -52,6 +52,14 @@ public class CultureServiceImpl implements CultureService {
     }
 
     @Override
+    public Culture updateCulture(Culture culture, UpdateCultureDto cultureDto) {
+        culture.setVisible(cultureDto.getVisible());
+        culture.setDescription(cultureDto.getDescription());
+        culture.setName(cultureDto.getName());
+        return cultureRepository.save(culture);
+    }
+
+    @Override
     public Culture findCultureByIdAndVisible(Long id) {
         Culture culture = cultureRepository.findByIdAndVisible(id,true);
         return culture;

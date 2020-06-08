@@ -12,10 +12,9 @@ public interface ProjectService {
     Project createProject(SaveProjectDto projectDto, User manager) throws UserNotFoundException;
     Boolean deleteProjectById(Long id);
     Project updateProject(UpdateProjectDto saveProjectDto, Long Id) throws UserNotFoundException;
+    Project updateProject(UpdateProjectDto projectDto, Project project, User user)
+        throws UserNotFoundException;
     Project findProjectById(Long id);
-    Project findByMember(User member);
-    Project findProjectByManager(User manager);
-    Project findProjectByUser(User user,Long id);
     Project findProjectByUser(User user);
     Iterable<Project> findAll();
 }

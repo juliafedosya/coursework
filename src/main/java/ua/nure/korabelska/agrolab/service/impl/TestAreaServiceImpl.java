@@ -12,7 +12,6 @@ import ua.nure.korabelska.agrolab.repository.TestAreaRepository;
 import ua.nure.korabelska.agrolab.service.TestAreaService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TestAreaServiceImpl implements TestAreaService {
@@ -36,18 +35,19 @@ public class TestAreaServiceImpl implements TestAreaService {
     }
 
     @Override
-    public TestArea updateTestArea(UpdateTestAreaDto testAreaDto, TestArea testArea, Long projectId) {
+    public TestArea updateTestArea(UpdateTestAreaDto testAreaDto, TestArea testArea) {
             testArea.setObservationData(testAreaDto.getObservationData());
-            Culture culture = cultureRepository.findByIdAndProjectId(testAreaDto.getCultureId(),projectId);
-            if(culture!=null) {
+            Culture culture = cultureRepository.findById(testAreaDto.getCultureId()).get();
+            if(culture!=null && (culture.getVisible() ||
+                culture.getProject().getId().equals(testArea.getProject().getId()))) {
                 testArea.setCulture(culture);
             }
            return testAreaRepository.save(testArea);
     }
 
     @Override
-    public TestArea findTestAreaByIdAndProjectId(Long id, Long projectId) {
-        TestArea testArea = testAreaRepository.findByIdAndProjectId(id,projectId);
+    public TestArea findTestAreaById(Long id) {
+        TestArea testArea = testAreaRepository.findById(id).get();
         return testArea;
     }
 

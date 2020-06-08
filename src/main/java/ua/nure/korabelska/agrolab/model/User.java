@@ -49,16 +49,6 @@ public class User extends BaseEntity {
             property = "id")
     @JsonIdentityReference(alwaysAsId = true)
     @ToString.Exclude
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "project_manager_id", referencedColumnName = "id")
-    private Project managerInProject;
-
-    @EqualsAndHashCode.Exclude
-    @JsonIdentityInfo(
-            generator = ObjectIdGenerators.PropertyGenerator.class,
-            property = "id")
-    @JsonIdentityReference(alwaysAsId = true)
-    @ToString.Exclude
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "project_participant_id",referencedColumnName = "id")
     private Project participantInProject;
