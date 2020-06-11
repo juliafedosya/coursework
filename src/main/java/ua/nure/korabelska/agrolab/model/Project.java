@@ -29,6 +29,7 @@ public class Project extends BaseEntity {
     private Set<Culture> cultures;
 
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
     private Set<TestArea> testAreas;
 

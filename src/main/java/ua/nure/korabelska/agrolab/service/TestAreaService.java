@@ -1,7 +1,7 @@
 package ua.nure.korabelska.agrolab.service;
 
 import ua.nure.korabelska.agrolab.dto.SaveTestAreaDto;
-import ua.nure.korabelska.agrolab.dto.UpdateTestAreaDto;
+import ua.nure.korabelska.agrolab.dto.update.UpdateTestAreaDto;
 import ua.nure.korabelska.agrolab.model.Project;
 import ua.nure.korabelska.agrolab.model.TestArea;
 

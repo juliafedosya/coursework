@@ -1,29 +1,34 @@
 package ua.nure.korabelska.agrolab.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ua.nure.korabelska.agrolab.dto.SaveTestAreaDto;
-import ua.nure.korabelska.agrolab.dto.UpdateTestAreaDto;
+import ua.nure.korabelska.agrolab.dto.update.UpdateTestAreaDto;
 import ua.nure.korabelska.agrolab.model.Culture;
+import ua.nure.korabelska.agrolab.model.device.AcidityDevice;
+import ua.nure.korabelska.agrolab.model.device.HumidityDevice;
 import ua.nure.korabelska.agrolab.model.Project;
 import ua.nure.korabelska.agrolab.model.Status;
 import ua.nure.korabelska.agrolab.model.TestArea;
+import ua.nure.korabelska.agrolab.repository.AcidityDeviceRepository;
 import ua.nure.korabelska.agrolab.repository.CultureRepository;
+import ua.nure.korabelska.agrolab.repository.HumidityDeviceRepository;
 import ua.nure.korabelska.agrolab.repository.TestAreaRepository;
 import ua.nure.korabelska.agrolab.service.TestAreaService;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class TestAreaServiceImpl implements TestAreaService {
 
-    TestAreaRepository testAreaRepository;
+    final TestAreaRepository testAreaRepository;
 
-    CultureRepository cultureRepository;
+    final CultureRepository cultureRepository;
 
-    public TestAreaServiceImpl(TestAreaRepository testAreaRepository,CultureRepository cultureRepository) {
-        this.testAreaRepository = testAreaRepository;
-        this.cultureRepository = cultureRepository;
-    }
+    final HumidityDeviceRepository humidityDeviceRepository;
+
+    final AcidityDeviceRepository acidityDeviceRepository;
 
     @Override
     public TestArea createTestArea(SaveTestAreaDto testAreaDto, Project project) {
@@ -31,7 +36,21 @@ public class TestAreaServiceImpl implements TestAreaService {
         testArea.setDescription(testAreaDto.getDescription());
         testArea.setProject(project);
         testArea.setStatus(Status.ACTIVE);
-        return  testAreaRepository.save(testArea);
+        testArea =  testAreaRepository.save(testArea);
+        HumidityDevice device = new HumidityDevice();
+        device.setTestArea(testArea);
+        device.setId(testArea.getId());
+        device.setHumidity(0);
+        device.setActive(true);
+        AcidityDevice acidityDevice = new AcidityDevice();
+        device.setTestArea(testArea);
+        device.setId(testArea.getId());
+        device.setHumidity(0);
+        device.setActive(true);
+
+        humidityDeviceRepository.save(device);
+        acidityDeviceRepository.save(acidityDevice);
+        return testArea;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package ua.nure.korabelska.agrolab.service;
 
 import ua.nure.korabelska.agrolab.dto.SaveCultureDto;
-import ua.nure.korabelska.agrolab.dto.UpdateCultureDto;
+import ua.nure.korabelska.agrolab.dto.update.UpdateCultureDto;
 import ua.nure.korabelska.agrolab.model.Culture;
 import ua.nure.korabelska.agrolab.model.Project;
 

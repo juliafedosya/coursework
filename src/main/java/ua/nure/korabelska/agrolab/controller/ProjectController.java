@@ -7,6 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.korabelska.agrolab.dto.*;
+import ua.nure.korabelska.agrolab.dto.update.UpdateCultureDto;
+import ua.nure.korabelska.agrolab.dto.update.UpdateProjectDto;
+import ua.nure.korabelska.agrolab.dto.update.UpdateTestAreaDto;
 import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
 import ua.nure.korabelska.agrolab.model.Culture;
 import ua.nure.korabelska.agrolab.model.Project;
@@ -314,7 +317,6 @@ public class ProjectController {
     }
     return ResponseEntity.notFound().build();
   }
-
   private String resolveUsername(HttpServletRequest request) {
     return jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
   }

@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.nure.korabelska.agrolab.dto.SaveProjectDto;
-import ua.nure.korabelska.agrolab.dto.UpdateProjectDto;
+import ua.nure.korabelska.agrolab.dto.update.UpdateProjectDto;
 import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
 import ua.nure.korabelska.agrolab.model.Project;
 import ua.nure.korabelska.agrolab.model.Status;

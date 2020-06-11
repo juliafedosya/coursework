@@ -1,4 +1,4 @@
-package ua.nure.korabelska.agrolab.dto;
+package ua.nure.korabelska.agrolab.dto.update;
 
 import lombok.Data;
 

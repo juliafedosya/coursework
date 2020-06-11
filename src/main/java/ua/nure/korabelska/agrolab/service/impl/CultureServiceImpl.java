@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.nure.korabelska.agrolab.dto.SaveCultureDto;
-import ua.nure.korabelska.agrolab.dto.UpdateCultureDto;
+import ua.nure.korabelska.agrolab.dto.update.UpdateCultureDto;
 import ua.nure.korabelska.agrolab.model.Culture;
 import ua.nure.korabelska.agrolab.model.Project;
 import ua.nure.korabelska.agrolab.model.Status;
