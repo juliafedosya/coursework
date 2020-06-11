@@ -43,10 +43,10 @@ public class TestAreaServiceImpl implements TestAreaService {
         device.setHumidity(0);
         device.setActive(true);
         AcidityDevice acidityDevice = new AcidityDevice();
-        device.setTestArea(testArea);
-        device.setId(testArea.getId());
-        device.setHumidity(0);
-        device.setActive(true);
+        acidityDevice.setTestArea(testArea);
+        acidityDevice.setId(testArea.getId());
+        acidityDevice.setAcidity(0);
+        acidityDevice.setActive(true);
 
         humidityDeviceRepository.save(device);
         acidityDeviceRepository.save(acidityDevice);

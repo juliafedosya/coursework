@@ -60,7 +60,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/devices/acidity/{id}")
+    @GetMapping("/devices/humidity/{id}")
     public ResponseEntity<?> setHumidityDeviceStatus(@RequestParam() Boolean active,
         @PathVariable Long id) {
         humidityDeviceService.setDeviceActive(active,id);

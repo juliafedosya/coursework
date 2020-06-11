@@ -1,5 +1,6 @@
 package ua.nure.korabelska.agrolab.model.device;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -22,6 +23,7 @@ public class AcidityDevice {
   @Column(name = "acidity")
   private Integer acidity;
 
+  @JsonIgnore
   @OneToOne
   @MapsId
   private TestArea testArea;

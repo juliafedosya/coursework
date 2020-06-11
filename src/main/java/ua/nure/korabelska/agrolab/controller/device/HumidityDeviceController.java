@@ -1,15 +1,14 @@
 package ua.nure.korabelska.agrolab.controller.device;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.nure.korabelska.agrolab.dto.device.DeviceAcidityDto;
 import ua.nure.korabelska.agrolab.dto.device.DeviceHumidityDto;
 import ua.nure.korabelska.agrolab.exception.UserNotFoundException;
-import ua.nure.korabelska.agrolab.model.device.AcidityDevice;
 import ua.nure.korabelska.agrolab.model.device.HumidityDevice;
 import ua.nure.korabelska.agrolab.model.User;
 import ua.nure.korabelska.agrolab.security.jwt.JwtTokenProvider;
@@ -55,7 +54,7 @@ public class HumidityDeviceController {
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<?> updateDevice(@PathVariable Long id, @RequestBody DeviceHumidityDto deviceHumidityDto,
+  public ResponseEntity<?> updateDevice(@PathVariable Long id, @RequestBody @Valid DeviceHumidityDto deviceHumidityDto,
       HttpServletRequest request) {
     String username = jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
     User user;
