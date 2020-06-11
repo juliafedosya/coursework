@@ -34,13 +34,6 @@ public class AcidityDeviceController {
 
   @GetMapping("/{id}")
   public ResponseEntity<?> getDeviceById(@PathVariable Long id, HttpServletRequest request) {
-    String username = jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
-    User user;
-    try {
-      user = userService.findByUsername(username);
-    } catch (UserNotFoundException e) {
-      return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-    }
     AcidityDevice device = deviceService.getDevice(id);
     if(device== null) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -54,13 +47,6 @@ public class AcidityDeviceController {
   @PatchMapping("/{id}")
   public ResponseEntity<?> updateDevice(@PathVariable Long id, @RequestBody @Valid DeviceAcidityDto deviceAcidityDto,
       HttpServletRequest request) {
-    String username = jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
-    User user;
-    try {
-      user = userService.findByUsername(username);
-    } catch (UserNotFoundException e) {
-      return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-    }
     AcidityDevice device = deviceService.updateDeviceData(deviceAcidityDto, id);
     if(device != null) {
       if(device.getActive()) {

@@ -36,13 +36,6 @@ public class HumidityDeviceController {
 
   @GetMapping("/{id}")
   public ResponseEntity<?> getDeviceById(@PathVariable Long id, HttpServletRequest request) {
-    String username = jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
-    User user;
-    try {
-      user = userService.findByUsername(username);
-    } catch (UserNotFoundException e) {
-      return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-    }
       HumidityDevice device = deviceService.getDevice(id);
     if(device== null) {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -56,13 +49,6 @@ public class HumidityDeviceController {
   @PatchMapping("/{id}")
   public ResponseEntity<?> updateDevice(@PathVariable Long id, @RequestBody @Valid DeviceHumidityDto deviceHumidityDto,
       HttpServletRequest request) {
-    String username = jwtTokenProvider.getUserName(jwtTokenProvider.resolveToken(request));
-    User user;
-    try {
-      user = userService.findByUsername(username);
-    } catch (UserNotFoundException e) {
-      return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-    }
     HumidityDevice device = deviceService.updateDeviceData(deviceHumidityDto, id);
     if(device != null) {
       if(device.getActive()) {
